@@ -1,24 +1,14 @@
-import {
-  Inject,
-  Injectable,
-} from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import * as stellarSdk from '@stellar/stellar-sdk';
 import { Cache } from 'cache-manager';
-import {
-  CurrencyAmount,
-  Router,
-  Token,
-  TradeType,
-} from "soroswap-router-sdk";
+import { CurrencyAmount, Router, Token, TradeType } from 'soroswap-router-sdk';
 import { Protocols } from 'src/config/supportedProtocols';
 import { configLoader } from '../config/config-loader';
 import { fetchPathsDto } from './dto/fetchPaths.dto';
 
 @Injectable()
 export class UtilsService {
-  constructor(
-    @Inject('CACHE_MANAGER') private cacheManager: Cache,
-  ) {}
+  constructor(@Inject('CACHE_MANAGER') private cacheManager: Cache) {}
 
   async fetchPaths(network: string, body: fetchPathsDto) {
     const paths = await this.getPaths(network, body);
@@ -38,13 +28,13 @@ export class UtilsService {
       default:
         throw new Error('Invalid network');
     }
- 
+
     const asset0 = new Token(
       currentNetwork,
       payload.asset0.contract,
       payload.asset0.decimals,
       payload.asset0.code,
-      payload.asset0.name
+      payload.asset0.name,
     );
 
     const asset1 = new Token(
@@ -52,14 +42,14 @@ export class UtilsService {
       payload.asset1.contract,
       payload.asset1.decimals,
       payload.asset1.code,
-      payload.asset1.name
+      payload.asset1.name,
     );
-    
-    const amount = 1*10**payload.asset0.decimals;
+
+    const amount = 1 * 10 ** payload.asset0.decimals;
 
     const router = new Router({
-      backendUrl: 'http://localhost:4000', //https:api.soroswap.finance/
-      backendApiKey: configLoader().apiKey, //cualquiercosa
+      backendUrl: configLoader().backendURL,
+      backendApiKey: configLoader().apiKey,
       pairsCacheInSeconds: 20,
       protocols: [Protocols.SOROSWAP],
       network: currentNetwork,
@@ -71,7 +61,7 @@ export class UtilsService {
     const route = await router.route(
       currencyAmount,
       quoteCurrency,
-      TradeType.EXACT_INPUT
+      TradeType.EXACT_INPUT,
     );
 
     return route.trade;
