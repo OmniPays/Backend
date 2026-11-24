@@ -83,7 +83,12 @@ export class PairsService {
     network: Network,
     data: subscribeToLedgerEntriesDto,
   ) {
-    if (data.contractId.length === 0 || !data.contractId || !data.keyXdr) {
+    if (
+      !data ||
+      !Array.isArray(data.contractId) ||
+      data.contractId.length === 0 ||
+      !data.keyXdr
+    ) {
       throw new BadRequestException('Please double check your request body');
     }
 
@@ -378,11 +383,11 @@ export class PairsService {
         );
       });
     if (mercuryResponse && mercuryResponse.ok) {
-      const pasedLpVec = phoenixFactoryLpVecParser(mercuryResponse.data);
-      if (pasedLpVec.length === 0) {
-        return 0;
+      const parsedLpVec = phoenixFactoryLpVecParser(mercuryResponse.data);
+      if (!Array.isArray(parsedLpVec) || parsedLpVec.length === 0) {
+        return [];
       }
-      return pasedLpVec;
+      return parsedLpVec;
     } else {
       throw new ServiceUnavailableException(
         'Error getting Phoenix pairs addresses',
