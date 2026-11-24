@@ -55,7 +55,7 @@ Swagger UI is served at `http://localhost:4000/docs` (or the configured `PORT`).
 | `NODE_ENV` | `development`, `test`, or `production` (default `development`) |
 | `PORT` | HTTP port, integer between 1 and 65535 (default `4000`) |
 | `BACKEND_URL` | Public backend URL used for internal API calls and route calculation |
-| `API_KEY` | Value required in the `apiKey` header. Empty values are only allowed outside production |
+| `API_KEY` | Non-empty value required in the `apiKey` header in every environment |
 | `CORS_ORIGINS` | Optional comma-separated allowed origins; when absent CORS is open (`*`) |
 | `POSTGRES_URL` | Prisma PostgreSQL connection string |
 | `POSTGRES_DATABASE`, `POSTGRES_USER`, `POSTGRES_PASSWORD` | Values used by the Compose PostgreSQL service |
@@ -144,7 +144,7 @@ curl -X POST 'http://localhost:4000/events/pool/<pool-contract>?network=TESTNET'
 
 ## Security and authentication
 
-Every route is protected by `AuthMiddleware`, which validates the `apiKey` header with a timing-safe comparison. Health checks and Swagger remain reachable through the same middleware, so monitoring clients must send the key. The API key is loaded from `API_KEY`, is required in production, and should be rotated through the deployment environment.
+Every route is protected by `AuthMiddleware`, which validates the `apiKey` header with a timing-safe comparison. Health checks and Swagger remain reachable through the same middleware, so monitoring clients must send the key. The API key is loaded from `API_KEY`, is required in every environment, and should be rotated through the deployment environment.
 
 ## License
 
