@@ -12,10 +12,14 @@ export class AppService {
     private pairs: PairsService,
   ) {}
 
-  getHealth(): { status: string; time: string; database: string } {
+  async getHealth(): Promise<{
+    status: string;
+    time: string;
+    database: string;
+  }> {
     let dbStatus = 'Disconnected';
     try {
-      const isConnected = this.prisma.isConnected();
+      const isConnected = await this.prisma.isConnected();
       dbStatus = isConnected ? 'Connected' : 'Disconnected';
     } catch (error) {
       dbStatus = 'Error connecting to DB';
