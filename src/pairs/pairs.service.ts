@@ -108,6 +108,7 @@ export class PairsService {
                 `Error subscribing to pair ${i}: ${(response as SubscribeToLedgerEntriesInterface).error}`,
               );
             }
+            return response;
           });
 
         const subscription = await this.prisma.subscriptions.create({
@@ -142,6 +143,7 @@ export class PairsService {
                 `Error subscribing to events of pair ${i}: ${(response as SubscribeToLedgerEntriesInterface).error}`,
               );
             }
+            return response;
           });
 
         const eventSubscription = await this.prisma.eventSubscriptions.create({
@@ -195,7 +197,7 @@ export class PairsService {
       if (!subscriptionExists) {
         args = {
           contractId,
-          key_xdr,
+          keyXdr: key_xdr,
           durability: 'persistent',
         };
 
@@ -207,6 +209,7 @@ export class PairsService {
                 `Error subscribing to factory for pair index ${i}: ${(response as SubscribeToLedgerEntriesInterface).error}`,
               );
             }
+            return response;
           });
 
         await this.prisma.subscriptions.create({
