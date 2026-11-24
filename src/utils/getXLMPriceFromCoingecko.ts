@@ -6,4 +6,3 @@ export const getXLMPriceFromCoingecko = async (): Promise<number> => {
   );
   return currentXlmValueInUsd.data.stellar.usd;
 };
-

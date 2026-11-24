@@ -4,4 +4,3 @@ export { GET_EVENTS_BY_CONTRACT_AND_TOPIC } from './getEventsByContractIdAndTopi
 export { GET_LAST_CONTRACT_ENTRY } from './getLastContractEntry';
 export { buildGetPairAddressesQuery } from './getPairAddresses';
 export { buildGetPairWithTokensAndReservesQuery } from './getPairWithTokensAndReserves';
-

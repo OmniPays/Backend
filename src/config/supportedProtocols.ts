@@ -1,4 +1,4 @@
 export enum Protocols {
-    SOROSWAP = "soroswap",
-    PHOENIX = "phoenix",
-  }
+  SOROSWAP = 'soroswap',
+  PHOENIX = 'phoenix',
+}

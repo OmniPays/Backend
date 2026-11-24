@@ -1,8 +1,7 @@
 export {
   ContractEntriesResponse,
   ParsedFactoryInstanceEntry,
-  SubscribeToLedgerEntriesInterface
+  SubscribeToLedgerEntriesInterface,
 } from './getContractEntries';
 export { GetContractEventsResponse } from './getContractEvents';
 export { TokenType } from './tokenType';
-

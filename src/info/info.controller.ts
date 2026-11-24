@@ -525,11 +525,10 @@ export class InfoController {
   @ApiOkResponse({
     description: 'An object with the token info and the price in USD',
   })
-  async getUSDPrice( 
+  async getUSDPrice(
     @Query() query: QueryNetworkDto,
-    @Param('token') token: string){
+    @Param('token') token: string,
+  ) {
     return this.infoService.getUSDPriceOfAsset(token, query.network);
   }
-
-
 }

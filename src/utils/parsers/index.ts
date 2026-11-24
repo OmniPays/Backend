@@ -2,7 +2,7 @@ export { factoryInstanceParser } from './factoryInstanceParser';
 export { pairAddressesParser } from './getPairEntriesParser';
 export {
   phoenixPairInstanceParser,
-  soroswapPairInstanceParser
+  soroswapPairInstanceParser,
 } from './pairInstanceParser';
 export { phoenixFactoryLpVecParser } from './phoenixFactoryLpVecParser';
 
@@ -10,7 +10,7 @@ export { getContractEventsByDayParser } from './getContractEventsByDayParser';
 export { getEntriesByDayParser } from './getEntriesByDayParser';
 export {
   PairInstanceEntryParserResult,
-  PairInstanceWithEntriesParserResult
+  PairInstanceWithEntriesParserResult,
 } from './soroswapPairInstanceWithEntriesParser';
 
 export { shortenAddress } from './addressParsers';
