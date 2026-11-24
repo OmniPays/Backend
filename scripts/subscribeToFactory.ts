@@ -1,6 +1,5 @@
 import {
   ContractType,
-  Network,
   PrismaClient,
   Protocol,
   StorageType,
@@ -8,20 +7,14 @@ import {
 import { constants } from '../src/constants';
 import { selectMercuryInstance } from '../src/services/mercury';
 import { getFactoryAddress } from '../src/utils';
+import { parseNetworkArg } from './args';
 
-const networkInput = process.argv[2]; // 'mainnet' or 'testnet'
-
-// Mapping string input to the Network enum
-const networkMap = {
-  mainnet: 'MAINNET',
-  testnet: 'TESTNET',
-};
-
-// Default to TESTNET if the input is not recognized
-const network = networkMap[networkInput.toLowerCase()] || 'TESTNET';
+const network = parseNetworkArg(
+  process.argv[2],
+  'yarn subscribe:factory <testnet|mainnet>',
+);
 
 (async function () {
-  if (!network) throw Error('No network given <testnet | mainnet>');
   const mercuryInstance = selectMercuryInstance(network);
 
   const prisma = new PrismaClient();

@@ -17,8 +17,10 @@ services:
       - .env
     volumes:
       - .:/app
+    command: sh -c "yarn install --frozen-lockfile && yarn prisma generate && yarn prisma migrate deploy && yarn start:dev"
     depends_on:
       - pgdb
+      - redis
     stdin_open: true
     tty: true
 

@@ -1,25 +1,17 @@
 import { Network, PrismaClient } from '@prisma/client';
-import { selectMercuryInstance } from '../src/services/mercury';
 import {
   constants,
   mainnetPhoenixContracts,
   testnetPhoenixContracts,
 } from '../src/constants';
+import { selectMercuryInstance } from '../src/services/mercury';
+import { parseNetworkArg, requireArg } from './args';
 
-const networkInput = process.argv[2]; // 'mainnet' or 'testnet'
-
-// Mapping string input to the Network enum
-const networkMap = {
-  mainnet: 'MAINNET',
-  testnet: 'TESTNET',
-};
-
-// Default to TESTNET if the input is not recognized
-const network = networkMap[networkInput.toLowerCase()] || 'TESTNET';
+const usage = 'yarn subscribe:phoenix <testnet|mainnet> <keyXdr>';
+const network = parseNetworkArg(process.argv[2], usage);
+const keyXdr = requireArg(process.argv[3], 'keyXdr', usage);
 
 (async function () {
-  if (!network) throw Error('No network given <testnet | mainnet>');
-
   const mercuryInstance = selectMercuryInstance(network);
 
   const prisma = new PrismaClient();
@@ -30,7 +22,6 @@ const network = networkMap[networkInput.toLowerCase()] || 'TESTNET';
       : testnetPhoenixContracts.factory;
   console.log('Contract ID:', contractId);
 
-  const keyXdr = process.argv[3].trim();
   console.log('Key XDR:', keyXdr);
 
   const subscriptionExists = await prisma.subscriptions.findFirst({
