@@ -45,7 +45,7 @@ export class UtilsService {
       payload.asset1.name,
     );
 
-    const amount = 1 * 10 ** payload.asset0.decimals;
+    const amount = 1 * 10 ** payload.asset1.decimals;
 
     const router = new Router({
       backendUrl: configLoader().backendURL,

@@ -1371,13 +1371,19 @@ export class InfoService {
       );
     }
 
-    const xlmAmount = new BigNumber(trade.amountOutMin)
-      .multipliedBy(10 ** -XLM.decimals)
-      .toNumber();
+    const xlmAmount = new BigNumber(trade.amountOutMin).shiftedBy(
+      -XLM.decimals,
+    );
+    if (xlmAmount.lte(0)) {
+      throw new ServiceUnavailableException(
+        'No usable route found to price this asset',
+      );
+    }
+
     const xlmUsdPrice = await this.getXlmValue();
     const response = {
       asset: pathPayload.asset1,
-      USDPrice: xlmAmount * xlmUsdPrice,
+      USDPrice: xlmAmount.toNumber() * xlmUsdPrice,
     };
     return response;
   }
