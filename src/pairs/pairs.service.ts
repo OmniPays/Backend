@@ -38,6 +38,24 @@ export class PairsService {
     @Inject('CACHE_MANAGER') private cacheManager: Cache,
   ) {}
 
+  private eventSubscriptionFields(
+    topics: {
+      topic1?: string;
+      topic2?: string;
+      topic3?: string;
+      topic4?: string;
+      maxSingleSize?: string;
+    } = {},
+  ) {
+    return {
+      topic1: topics.topic1 ?? null,
+      topic2: topics.topic2 ?? null,
+      topic3: topics.topic3 ?? null,
+      topic4: topics.topic4 ?? null,
+      maxSingleSize: topics.maxSingleSize ?? null,
+    };
+  }
+
   /**
    * Function to get the keyXdr of a specific pair contract.
    * @param pairIndex Index of the pair in the PairAddressesNIndexed attribute of the Factory contract.
@@ -70,6 +88,7 @@ export class PairsService {
     }
 
     const mercuryInstance = selectMercuryInstance(network);
+    const eventFields = this.eventSubscriptionFields(data);
 
     const response = [];
     let subscribeResponse;
@@ -89,6 +108,7 @@ export class PairsService {
           where: {
             network,
             contractId: data.contractId[i],
+            ...eventFields,
           },
         });
 
@@ -133,6 +153,10 @@ export class PairsService {
       if (!eventSubscriptionExists) {
         const args = {
           contractId: data.contractId[i],
+          topic1: data.topic1,
+          topic2: data.topic2,
+          topic3: data.topic3,
+          topic4: data.topic4,
         };
 
         eventSubscribeResponse = await mercuryInstance
@@ -150,6 +174,7 @@ export class PairsService {
           data: {
             contractId: data.contractId[i],
             network,
+            ...eventFields,
           },
         });
 
@@ -374,6 +399,7 @@ export class PairsService {
    */
   async subscribeToPhoenixPair(network: Network, contractId: string) {
     const mercuryInstance = selectMercuryInstance(network);
+    const eventFields = this.eventSubscriptionFields();
 
     const keyXdr = constants.instanceStorageKeyXdr;
     const subscriptionExists = await this.prisma.subscriptions.findFirst({
@@ -389,6 +415,7 @@ export class PairsService {
         where: {
           network,
           contractId,
+          ...eventFields,
         },
       });
 
@@ -447,6 +474,7 @@ export class PairsService {
         data: {
           contractId,
           network,
+          ...eventFields,
         },
       });
 
@@ -553,6 +581,7 @@ export class PairsService {
             where: {
               network,
               contractId: pairAddress,
+              ...this.eventSubscriptionFields(),
             },
           });
 
