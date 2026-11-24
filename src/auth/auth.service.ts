@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { timingSafeEqual } from 'crypto';
 
 @Injectable()
 export class AuthService {
@@ -10,6 +11,17 @@ export class AuthService {
   }
 
   validateApiKey(apiKey: string): boolean {
-    return apiKey === this.apiKey;
+    if (!this.apiKey || !apiKey) {
+      return false;
+    }
+
+    const expected = Buffer.from(this.apiKey);
+    const provided = Buffer.from(apiKey);
+
+    if (expected.length !== provided.length) {
+      return false;
+    }
+
+    return timingSafeEqual(expected, provided);
   }
 }
