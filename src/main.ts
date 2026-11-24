@@ -2,6 +2,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
+import { configLoader } from './config/config-loader';
 
 async function bootstrap() {
   const port = Number(process.env.PORT ?? 4000);
@@ -11,9 +12,16 @@ async function bootstrap() {
   }
 
   const app = await NestFactory.create(AppModule);
+  const configuredOrigins = configLoader().corsOrigins;
+  const corsOrigins = configuredOrigins
+    ? configuredOrigins
+        .split(',')
+        .map((origin) => origin.trim())
+        .filter(Boolean)
+    : [];
 
   app.enableCors({
-    origin: '*',
+    origin: corsOrigins.length > 0 ? corsOrigins : '*',
   });
 
   app.useGlobalPipes(
