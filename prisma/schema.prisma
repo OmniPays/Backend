@@ -14,9 +14,9 @@ model Subscriptions {
   protocol     Protocol?
   contractType ContractType?
   storageType  StorageType?
-  network      Network @default(TESTNET)
+  network      Network       @default(TESTNET)
 
-  @@unique([contractId, keyXdr])
+  @@unique([contractId, keyXdr, network], map: "Subscriptions_contractId_keyXdr_network_key")
   @@index([network, protocol, contractType])
 }
 
@@ -43,13 +43,13 @@ enum StorageType {
 }
 
 model XlmUsdPrice {
-  id        Int           @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
   price     Float
   updatedAt DateTime
 }
 
 model EventSubscriptions {
-  id            Int           @id @default(autoincrement())
+  id            Int     @id @default(autoincrement())
   contractId    String
   maxSingleSize String?
   topic1        String?
@@ -58,6 +58,7 @@ model EventSubscriptions {
   topic4        String?
   network       Network @default(TESTNET)
 
-  @@unique([contractId, maxSingleSize])
+  @@unique([contractId, maxSingleSize, network], map: "EventSubscriptions_contractId_maxSingleSize_network_key")
+  @@unique([contractId, topic1, topic2, topic3, topic4, network], map: "EventSubscriptions_contractId_topics_network_key")
   @@index([network, topic1, topic2, contractId])
 }
