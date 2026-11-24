@@ -43,6 +43,7 @@
     "cache-manager-redis-yet": "^4.2.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.0",
+    "graphql-request": "^6.1.0",
     "joi": "^17.11.0",
     "mercury-sdk": "^0.1.16",
     "passport": "^0.7.0",
