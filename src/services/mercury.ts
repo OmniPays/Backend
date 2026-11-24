@@ -1,23 +1,38 @@
 import { Network } from '@prisma/client';
 import { Mercury } from 'mercury-sdk';
+import { configLoader } from '../config/config-loader';
 
-export const mercuryInstanceTestnet = new Mercury({
-  backendEndpoint: process.env.MERCURY_TESTNET_BACKEND_ENDPOINT,
-  graphqlEndpoint: process.env.MERCURY_TESTNET_GRAPHQL_ENDPOINT,
-  email: process.env.MERCURY_EMAIL,
-  password: process.env.MERCURY_PASSWORD,
-});
+let testnetInstance: Mercury | undefined;
+let mainnetInstance: Mercury | undefined;
 
-export const mercuryInstanceMainnet = new Mercury({
-  backendEndpoint: process.env.MERCURY_BACKEND_ENDPOINT,
-  graphqlEndpoint: process.env.MERCURY_GRAPHQL_ENDPOINT,
-  email: process.env.MERCURY_EMAIL,
-  password: process.env.MERCURY_PASSWORD,
-});
+function createInstance(network: Network): Mercury {
+  const { mercury } = configLoader();
+  const credentials = {
+    email: mercury.email,
+    password: mercury.password,
+  };
 
-// TODO: Replace the logic below in other parts of the code to use this function
-export const selectMercuryInstance = (network: Network) => {
-  return network == Network.TESTNET
-    ? mercuryInstanceTestnet
-    : mercuryInstanceMainnet;
+  if (network === Network.TESTNET) {
+    return new Mercury({
+      backendEndpoint: mercury.testnetBackendEndpoint,
+      graphqlEndpoint: mercury.testnetGraphqlEndpoint,
+      ...credentials,
+    });
+  }
+
+  return new Mercury({
+    backendEndpoint: mercury.mainnetBackendEndpoint,
+    graphqlEndpoint: mercury.mainnetGraphqlEndpoint,
+    ...credentials,
+  });
+}
+
+export const selectMercuryInstance = (network: Network): Mercury => {
+  if (network === Network.TESTNET) {
+    testnetInstance ??= createInstance(network);
+    return testnetInstance;
+  }
+
+  mainnetInstance ??= createInstance(network);
+  return mainnetInstance;
 };

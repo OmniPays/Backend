@@ -7,10 +7,7 @@ import {
   Protocol,
   StorageType,
 } from '@prisma/client';
-import {
-  mercuryInstanceMainnet,
-  mercuryInstanceTestnet,
-} from 'src/services/mercury';
+import { selectMercuryInstance } from 'src/services/mercury';
 import { constants, factoryAddresses } from '../constants';
 import { GET_ALL_LEDGER_ENTRY_SUBSCRIPTIONS } from '../utils/queries';
 import { getFactoryAddress } from 'src/utils';
@@ -23,10 +20,7 @@ export async function populateDatabase(
 
   console.log(soroswapPairAddresses);
 
-  const mercuryInstance =
-    network == Network.TESTNET
-      ? mercuryInstanceTestnet
-      : mercuryInstanceMainnet;
+  const mercuryInstance = selectMercuryInstance(network);
 
   const prisma = new PrismaClient();
 

@@ -12,10 +12,7 @@ import { PredefinedTTL } from 'src/config/predefinedTtl';
 import { xlmToken } from 'src/constants';
 import { PairsService } from 'src/pairs/pairs.service';
 import { PrismaService } from 'src/prisma/prisma.service';
-import {
-  mercuryInstanceMainnet,
-  mercuryInstanceTestnet,
-} from 'src/services/mercury';
+import { selectMercuryInstance } from 'src/services/mercury';
 import { TokenType } from 'src/types';
 import {
   GET_CONTRACT_EVENTS,
@@ -249,10 +246,7 @@ export class InfoService {
       return inheritedContractEvents;
     }
 
-    const mercuryInstance =
-      network == Network.TESTNET
-        ? mercuryInstanceTestnet
-        : mercuryInstanceMainnet;
+    const mercuryInstance = selectMercuryInstance(network);
 
     const routerAddress = await getRouterAddress(network);
 

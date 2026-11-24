@@ -1,8 +1,5 @@
 import { ContractType, Network, PrismaClient, Protocol } from '@prisma/client';
-import {
-  mercuryInstanceMainnet,
-  mercuryInstanceTestnet,
-} from '../src/services/mercury';
+import { selectMercuryInstance } from '../src/services/mercury';
 import { getRouterAddress } from '../src/utils';
 
 const networkInput = process.argv[2]; // 'mainnet' or 'testnet'
@@ -18,10 +15,7 @@ const network = networkMap[networkInput.toLowerCase()] || 'TESTNET';
 
 (async function () {
   if (!network) throw Error('No network given <testnet | mainnet>');
-  const mercuryInstance =
-    network == Network.TESTNET
-      ? mercuryInstanceTestnet
-      : mercuryInstanceMainnet;
+  const mercuryInstance = selectMercuryInstance(network);
 
   const prisma = new PrismaClient();
 

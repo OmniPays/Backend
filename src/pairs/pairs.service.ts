@@ -13,10 +13,7 @@ import { subscribeToLedgerEntriesDto } from './dto/subscribe.dto';
 import { ContractType, Network, Protocol, StorageType } from '@prisma/client';
 import { PredefinedTTL } from 'src/config/predefinedTtl';
 import { constants } from 'src/constants';
-import {
-  mercuryInstanceMainnet,
-  mercuryInstanceTestnet,
-} from 'src/services/mercury';
+import { selectMercuryInstance } from 'src/services/mercury';
 import { SubscribeToLedgerEntriesInterface } from 'src/types';
 import { getFactoryAddress } from 'src/utils';
 import { createVariablesForPairsTokensAndReserves } from 'src/utils/createVariablesForPairsTokensAndReserves';
@@ -72,10 +69,7 @@ export class PairsService {
       throw new BadRequestException('Please double check your request body');
     }
 
-    const mercuryInstance =
-      network == Network.TESTNET
-        ? mercuryInstanceTestnet
-        : mercuryInstanceMainnet;
+    const mercuryInstance = selectMercuryInstance(network);
 
     const response = [];
     let subscribeResponse;
@@ -183,10 +177,7 @@ export class PairsService {
   ) {
     const contractId = getFactoryAddress(network);
 
-    const mercuryInstance =
-      network == Network.TESTNET
-        ? mercuryInstanceTestnet
-        : mercuryInstanceMainnet;
+    const mercuryInstance = selectMercuryInstance(network);
 
     let key_xdr;
     let args;
@@ -244,10 +235,7 @@ export class PairsService {
   async getSoroswapPairsCountFromMercury(network: Network) {
     const contractId = getFactoryAddress(network);
 
-    const mercuryInstance =
-      network == Network.TESTNET
-        ? mercuryInstanceTestnet
-        : mercuryInstanceMainnet;
+    const mercuryInstance = selectMercuryInstance(network);
 
     const mercuryResponse = await mercuryInstance
       .getCustomQuery({
@@ -317,10 +305,7 @@ export class PairsService {
   async getSoroswapPairAddresses(network: Network) {
     const pairCounter = await this.getSoroswapPairsCountFromMercury(network);
 
-    const mercuryInstance =
-      network == Network.TESTNET
-        ? mercuryInstanceTestnet
-        : mercuryInstanceMainnet;
+    const mercuryInstance = selectMercuryInstance(network);
 
     if (pairCounter > 0) {
       const query = buildGetPairAddressesQuery(pairCounter);
@@ -351,10 +336,7 @@ export class PairsService {
    * @throws Error if Mercury request fails.
    */
   async getPhoenixPairAddresses(network: Network, contractId: string) {
-    const mercuryInstance =
-      network == Network.TESTNET
-        ? mercuryInstanceTestnet
-        : mercuryInstanceMainnet;
+    const mercuryInstance = selectMercuryInstance(network);
 
     const mercuryResponse = await mercuryInstance
       .getCustomQuery({
@@ -388,10 +370,7 @@ export class PairsService {
    * @throws Error if Mercury request fails.
    */
   async subscribeToPhoenixPair(network: Network, contractId: string) {
-    const mercuryInstance =
-      network == Network.TESTNET
-        ? mercuryInstanceTestnet
-        : mercuryInstanceMainnet;
+    const mercuryInstance = selectMercuryInstance(network);
 
     const keyXdr = constants.instanceStorageKeyXdr;
     const subscriptionExists = await this.prisma.subscriptions.findFirst({
@@ -486,10 +465,7 @@ export class PairsService {
     addresses: string[],
     withEntries: boolean,
   ) {
-    const mercuryInstance =
-      network == Network.TESTNET
-        ? mercuryInstanceTestnet
-        : mercuryInstanceMainnet;
+    const mercuryInstance = selectMercuryInstance(network);
 
     if (addresses.length > 0) {
       const query = buildGetPairWithTokensAndReservesQuery(addresses.length);
@@ -527,10 +503,7 @@ export class PairsService {
     network: Network,
     addresses: string[],
   ) {
-    const mercuryInstance =
-      network == Network.TESTNET
-        ? mercuryInstanceTestnet
-        : mercuryInstanceMainnet;
+    const mercuryInstance = selectMercuryInstance(network);
 
     if (addresses.length > 0) {
       const query = buildGetPairWithTokensAndReservesQuery(addresses.length);
@@ -660,7 +633,10 @@ export class PairsService {
    * @param protocols Array with the protocols to be fetched. If none is provided, all protocols will be fetched.
    * @returns Array with all liquidity pools.
    */
-  async getAllPools(network: Network, protocols: string[] = ['soroswap', 'phoenix']) {
+  async getAllPools(
+    network: Network,
+    protocols: string[] = ['soroswap', 'phoenix'],
+  ) {
     let allPools = [];
 
     // Prepare to track which protocols need data fetching
