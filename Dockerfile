@@ -38,6 +38,6 @@ USER node
 EXPOSE 4000
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=60s --retries=3 \
-  CMD ["node", "-e", "const net = require('net'); const socket = net.connect(Number(process.env.PORT || 4000), '127.0.0.1'); socket.on('connect', () => { socket.end(); process.exit(0); }); socket.on('error', () => process.exit(1));"]
+  CMD ["node", "-e", "const http=require('http');const req=http.get({host:'127.0.0.1',port:Number(process.env.PORT||4000),path:'/',headers:process.env.API_KEY?{apiKey:process.env.API_KEY}:{}},r=>{r.resume();process.exit(r.statusCode===200?0:1)});req.on('error',()=>process.exit(1));req.setTimeout(4000,()=>req.destroy());"]
 
 CMD ["./start_prod.sh"]

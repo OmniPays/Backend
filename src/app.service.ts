@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, ServiceUnavailableException } from '@nestjs/common';
 import { Network } from '@prisma/client';
 import { OptimalRouteRequestBodyDto, OptimalRouteResponseDto } from './dto';
 import { PrismaService } from './prisma/prisma.service';
@@ -25,11 +25,16 @@ export class AppService {
       dbStatus = 'Error connecting to DB';
     }
 
-    return {
-      status: 'OK',
+    const health = {
       time: new Date().toISOString(),
       database: dbStatus,
     };
+
+    if (dbStatus !== 'Connected') {
+      throw new ServiceUnavailableException({ ...health, status: 'ERROR' });
+    }
+
+    return { ...health, status: 'OK' };
   }
 
   getOptimalRoute(
