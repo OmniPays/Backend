@@ -427,6 +427,10 @@ export class InfoService {
 
     const usdc = tokens.find((item) => item.code === 'USDC');
 
+    if (!usdc) {
+      throw new ServiceUnavailableException('USDC token not found');
+    }
+
     const filteredPools = pools.filter(
       (pool) =>
         (pool.token0 == token && pool.token1 == usdc.contract) ||
@@ -1356,14 +1360,24 @@ export class InfoService {
       },
     };
     const trade = await this.utilsModule.fetchPaths(network, pathPayload);
-    const tradeOutputAmount = new BigNumber(trade.amountOutMin);
-    const XLMPrice = tradeOutputAmount
+
+    if (
+      !trade ||
+      trade.amountOutMin === null ||
+      trade.amountOutMin === undefined
+    ) {
+      throw new ServiceUnavailableException(
+        'No route found to price this asset',
+      );
+    }
+
+    const xlmAmount = new BigNumber(trade.amountOutMin)
       .multipliedBy(10 ** -XLM.decimals)
-      .toString();
-    const formattedAmount = await this.getXlmValue(Number(XLMPrice));
+      .toNumber();
+    const xlmUsdPrice = await this.getXlmValue();
     const response = {
       asset: pathPayload.asset1,
-      USDPrice: formattedAmount,
+      USDPrice: xlmAmount * xlmUsdPrice,
     };
     return response;
   }
