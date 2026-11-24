@@ -9,11 +9,7 @@ export const envSchema = Joi.object({
   NODE_ENV: Joi.string()
     .valid('development', 'test', 'production')
     .default('development'),
-  API_KEY: Joi.when('NODE_ENV', {
-    is: 'production',
-    then: Joi.string().min(1).required(),
-    otherwise: Joi.string().allow('').required(),
-  }),
+  API_KEY: Joi.string().min(1).required(),
   POSTGRES_URL: Joi.string()
     .uri({ scheme: ['postgres', 'postgresql'] })
     .required(),
